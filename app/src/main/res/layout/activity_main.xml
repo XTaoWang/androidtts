@@ -9,12 +9,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-<!--        <ImageView-->
-<!--            android:id="@+id/logo"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginTop="20dp"-->
-<!--            android:src="@drawable/paddlespeech_logo" />-->
+        <!--        <ImageView-->
+        <!--            android:id="@+id/logo"-->
+        <!--            android:layout_width="wrap_content"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:layout_marginTop="20dp"-->
+        <!--            android:src="@drawable/paddlespeech_logo" />-->
 
         <EditText
             android:id="@+id/content_text"
@@ -42,7 +42,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="12dp"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="30dp"
                 android:layout_marginRight="12dp"
                 android:layout_marginBottom="5dp"
                 android:lineSpacingExtra="4dp"
@@ -50,7 +50,8 @@
                 android:scrollbars="vertical"
                 android:singleLine="false"
                 android:text=""
-                android:textColor="#3C3C3C" />
+                android:textColor="#3C3C3C"
+                tools:text="我是配置文本" />
 
             <Spinner
                 android:id="@+id/spinner1"

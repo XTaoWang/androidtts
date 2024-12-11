@@ -19,6 +19,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -68,7 +69,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected String cpuPowerMode = "";
 
     protected int speakId = 174;
-//    protected Predictor predictor = new Predictor();
+    //    protected Predictor predictor = new Predictor();
     int sampleRate = 8000;
     private final String wavName = "tts_output.wav";
     private final String wavFile = Environment.getExternalStorageDirectory() + File.separator + wavName;
@@ -105,7 +106,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //                    mediaPlayer.reset();
 //                    initMediaPlayer();
 //                }
-                Speaktts.StopAudioTrack();
+                Speaktts.getInstance().stopSpeaking();
 
                 break;
             default:
@@ -119,11 +120,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 getString(R.string.SPEACK_ID_NUM_DEFAULT)));
 
         if(content_text.getText().toString().equals(""))
-           return;
+            return;
         content=content_text.getText().toString();
 
-        Speaktts.SpeakText(content,sampleRate,speakId);
-        tvInferenceTime.setText(Speaktts.message);
+        Speaktts.getInstance().speakText(content,sampleRate,speakId,tvInferenceTime);
+//        tvInferenceTime.setText(Speaktts.message);
 
     }
 
@@ -240,6 +241,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         String externalPath = this.getExternalFilesDir(null).getAbsolutePath();
+        Log.d("ddddd",""+externalPath);
         AssetCopyer.copyAllAssets(this.getApplicationContext(), externalPath,"dict");
 //        AssetCopyer.copyAllAssets(this.getApplicationContext(), externalPath,"models");
 //        File file = new File(externalPath);
@@ -272,9 +274,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         String model_path = sharedPreferences.getString(getString(R.string.MODEL_PATH_KEY),
                 getString(R.string.MODEL_PATH_DEFAULT));
-        int speakId_select= Integer.valueOf(sharedPreferences.getString(getString(R.string.SPEACK_ID_NUM_KEY),
-                getString(R.string.SPEACK_ID_NUM_DEFAULT)));
 
+        Log.d("ddddd11",""+sharedPreferences.getString(getString(R.string.SPEACK_ID_NUM_KEY),""));
+
+        int speakId_select = 0;
+        if(!"SPEACK_ID_NUM_KEY".equals(sharedPreferences.getString(getString(R.string.SPEACK_ID_NUM_KEY),""))){
+            speakId_select =  Integer.valueOf(sharedPreferences.getString(getString(R.string.SPEACK_ID_NUM_KEY),
+                    getString(R.string.SPEACK_ID_NUM_DEFAULT)));
+        } else {
+            speakId_select =  Integer.valueOf(getString(R.string.SPEACK_ID_NUM_DEFAULT));
+        }
+        Log.d("dddddd",""+speakId_select);
         settingsChanged |= !model_path.equalsIgnoreCase(modelPath);
 
         int cpu_thread_num = Integer.parseInt(sharedPreferences.getString(getString(R.string.CPU_THREAD_NUM_KEY),
@@ -310,7 +320,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public boolean onLoadModel() {
-        return Speaktts.init(MainActivity.this, modelPath, AMmodelName, VOCmodelName, cpuThreadNum,
+        return Speaktts.getInstance().init(MainActivity.this, modelPath, AMmodelName, VOCmodelName, cpuThreadNum,
                 cpuPowerMode,speakId);
     }
 
@@ -390,7 +400,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     protected void onDestroy() {
-        Speaktts.onDestroy();
+        Speaktts.getInstance().onDestroy();
         worker.quit();
         super.onDestroy();
     }
@@ -429,6 +439,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public void onPause() {
         super.onPause();
-        Speaktts.pauseAudioTrack();
+        Speaktts.getInstance().pauseAudioTrack();
     }
 }
